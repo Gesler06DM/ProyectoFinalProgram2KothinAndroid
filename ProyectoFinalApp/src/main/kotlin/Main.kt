@@ -114,22 +114,36 @@ fun main() {
         println("1. Registrar un gasto extra")
         println("2. Registrar un ingreso extra")
         println("3. Ver dinero disponible")
-        println("4. Salir")
+        println("4. Ver lista de gastos")
+        println("5 Salir")
         print("Seleccione una opción: ")
 
         opcionMenu = readln().toInt()
         when (opcionMenu) {
 
             1 -> {
-                print("Ingrese el gasto extra: Q")
+                print("Ingrese la descripción del gasto: ")
+                val descripcion = readln()
+
+                print("Ingrese la categoría del gasto: ")
+                val categoria = readln()
+
+                print("Ingrese el monto del gasto: Q")
                 val gastoExtra = readln().toDouble()
+
+                listaGastos.add(
+                    Gasto(descripcion, categoria, gastoExtra)
+                )
 
                 dineroDisponible -= gastoExtra
 
+                println()
                 println("Gasto registrado correctamente.")
+                println("Descripción: $descripcion")
+                println("Categoría: $categoria")
+                println("Monto: Q$gastoExtra")
                 println("Dinero disponible actualizado: Q$dineroDisponible")
             }
-
             2 -> {
                 print("Ingrese el ingreso extra: Q")
                 val ingresoExtra = readln().toDouble()
