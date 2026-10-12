@@ -1,5 +1,6 @@
 package org.example
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 data class Gasto(
     var descripcion: String,
@@ -9,6 +10,9 @@ data class Gasto(
 )
 fun main() {
     val listaGastos = mutableListOf<Gasto>()
+
+    val formatoFecha = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")
+    val fechaRegistro = LocalDateTime.now()
     println("=================================")
     println("     CONTROL DE GASTOS")
     println("=================================")
@@ -19,14 +23,15 @@ fun main() {
     val apellido = readln()
     print("Ingresa tu edad:")
     val edad = readln().toInt()
-
     print("Ingrese su salario mensual: Q")
     val salario = readln().toDouble()
+
 
     println()
     println("Bienvenido/a, $nombre $apellido")
     println("Edad: $edad años")
     println("Su ingreso mensual es: Q$salario")
+    println("Fecha y hora de registro: ${fechaRegistro.format(formatoFecha)}")
     println()
     println("¿Qué actividades realiza?")
     println("1. Estudia")
@@ -172,6 +177,7 @@ fun main() {
                         println("${indice + 1}. ${gasto.descripcion}")
                         println("   Categoría: ${gasto.categoria}")
                         println("   Monto: Q${gasto.monto}")
+                        println("   Fecha y hora: ${gasto.fecha.format(formatoFecha)}")
                     }
                 }
             }
