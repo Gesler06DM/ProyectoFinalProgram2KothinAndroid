@@ -1,19 +1,28 @@
 package org.example
-
+data class Gasto(
+    var descripcion: String,
+    var categoria: String,
+    var monto: Double
+)
 fun main() {
-
+    val listaGastos = mutableListOf<Gasto>()
     println("=================================")
     println("     CONTROL DE GASTOS")
     println("=================================")
 
-    print("Ingrese su nombre: ")
+    print("Ingrese tu nombre: ")
     val nombre = readln()
+    print("Ingresa tu apellido: ")
+    val apellido = readln()
+    print("Ingresa tu edad:")
+    val edad = readln().toInt()
 
     print("Ingrese su salario mensual: Q")
     val salario = readln().toDouble()
 
     println()
-    println("Bienvenido/a, $nombre")
+    println("Bienvenido/a, $nombre $apellido")
+    println("Edad: $edad años")
     println("Su ingreso mensual es: Q$salario")
     println()
     println("¿Qué actividades realiza?")
@@ -96,4 +105,54 @@ fun main() {
     println("Otros gastos: Q$otrosGastos")
     println("Total de gastos: Q$totalGastos")
     println("Dinero disponible: Q$dineroDisponible")
+
+    var opcionMenu: Int
+
+    do {
+        println()
+        println("===== MENÚ =====")
+        println("1. Registrar un gasto extra")
+        println("2. Registrar un ingreso extra")
+        println("3. Ver dinero disponible")
+        println("4. Salir")
+        print("Seleccione una opción: ")
+
+        opcionMenu = readln().toInt()
+        when (opcionMenu) {
+
+            1 -> {
+                print("Ingrese el gasto extra: Q")
+                val gastoExtra = readln().toDouble()
+
+                dineroDisponible -= gastoExtra
+
+                println("Gasto registrado correctamente.")
+                println("Dinero disponible actualizado: Q$dineroDisponible")
+            }
+
+            2 -> {
+                print("Ingrese el ingreso extra: Q")
+                val ingresoExtra = readln().toDouble()
+
+                dineroDisponible += ingresoExtra
+
+                println("Ingreso registrado correctamente.")
+                println("Dinero disponible actualizado: Q$dineroDisponible")
+            }
+
+            3 -> {
+                println("Dinero disponible actualmente: Q$dineroDisponible")
+            }
+
+            4 -> {
+                println("Saliendo del sistema...")
+            }
+
+            else -> {
+                println("Opción no válida.")
+            }
+        }
+
+    } while (opcionMenu != 4)
+
 }
