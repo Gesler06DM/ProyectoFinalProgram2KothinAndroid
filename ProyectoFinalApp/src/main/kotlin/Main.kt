@@ -1,8 +1,11 @@
 package org.example
+import java.time.LocalDateTime
+
 data class Gasto(
     var descripcion: String,
     var categoria: String,
-    var monto: Double
+    var monto: Double,
+    var fecha: LocalDateTime = LocalDateTime.now()
 )
 fun main() {
     val listaGastos = mutableListOf<Gasto>()
@@ -159,6 +162,21 @@ fun main() {
             }
 
             4 -> {
+                println()
+                println("===== LISTA DE GASTOS =====")
+
+                if (listaGastos.isEmpty()) {
+                    println("No hay gastos registrados.")
+                } else {
+                    listaGastos.forEachIndexed { indice, gasto ->
+                        println("${indice + 1}. ${gasto.descripcion}")
+                        println("   Categoría: ${gasto.categoria}")
+                        println("   Monto: Q${gasto.monto}")
+                    }
+                }
+            }
+
+            5 -> {
                 println("Saliendo del sistema...")
             }
 
@@ -166,7 +184,6 @@ fun main() {
                 println("Opción no válida.")
             }
         }
-
-    } while (opcionMenu != 4)
+    } while (opcionMenu != 5)
 
 }
