@@ -4,6 +4,7 @@ import java.time.format.DateTimeFormatter
 
 fun main() {
     val listaGastos = mutableListOf<Gasto>()
+    val listaIngresos = mutableListOf<Ingreso>()
 
     val formatoFecha = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")
     val fechaRegistro = LocalDateTime.now()
@@ -123,7 +124,8 @@ fun main() {
         println("2. Registrar un ingreso extra")
         println("3. Ver dinero disponible")
         println("4. Ver lista de gastos")
-        println("5 Salir")
+        println("5. Ver lista de Ingresos")
+        println("6. Salir")
         print("Seleccione una opción: ")
 
         opcionMenu = readln().toInt()
@@ -153,12 +155,25 @@ fun main() {
                 println("Dinero disponible actualizado: Q$dineroDisponible")
             }
             2 -> {
-                print("Ingrese el ingreso extra: Q")
+                print("Ingrese la descripción del ingreso: ")
+                val descripcionIngreso = readln()
+
+                print("Ingrese el monto del ingreso extra: Q")
                 val ingresoExtra = readln().toDouble()
 
+                val nuevoIngreso = Ingreso(
+                    descripcionIngreso,
+                    ingresoExtra
+                )
+
+                listaIngresos.add(nuevoIngreso)
                 dineroDisponible += ingresoExtra
 
+                println()
                 println("Ingreso registrado correctamente.")
+                println("Descripción: ${nuevoIngreso.descripcion}")
+                println("Monto: Q${nuevoIngreso.monto}")
+                println("Fecha y hora: ${nuevoIngreso.fecha.format(formatoFecha)}")
                 println("Dinero disponible actualizado: Q$dineroDisponible")
             }
 
@@ -181,8 +196,22 @@ fun main() {
                     }
                 }
             }
-
             5 -> {
+                println()
+                println("===== LISTA DE INGRESOS =====")
+
+                if (listaIngresos.isEmpty()) {
+                    println("No hay ingresos registrados.")
+                } else {
+                    listaIngresos.forEachIndexed { indice, ingreso ->
+                        println("${indice + 1}. ${ingreso.descripcion}")
+                        println("   Monto: Q${ingreso.monto}")
+                        println("   Fecha y hora: ${ingreso.fecha.format(formatoFecha)}")
+                    }
+                }
+            }
+
+            6 -> {
                 println("Saliendo del sistema...")
             }
 
@@ -190,6 +219,6 @@ fun main() {
                 println("Opción no válida.")
             }
         }
-    } while (opcionMenu != 5)
+    } while (opcionMenu != 6)
 
 }
