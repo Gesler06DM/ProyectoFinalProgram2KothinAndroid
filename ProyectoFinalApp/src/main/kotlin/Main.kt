@@ -2,12 +2,6 @@ package org.example
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-data class Gasto(
-    var descripcion: String,
-    var categoria: String,
-    var monto: Double,
-    var fecha: LocalDateTime = LocalDateTime.now()
-)
 fun main() {
     val listaGastos = mutableListOf<Gasto>()
 
@@ -26,11 +20,17 @@ fun main() {
     print("Ingrese su salario mensual: Q")
     val salario = readln().toDouble()
 
+    val usuario = Usuario(
+        nombre,
+        apellido,
+        edad,
+        salario
+    )
 
     println()
-    println("Bienvenido/a, $nombre $apellido")
-    println("Edad: $edad años")
-    println("Su ingreso mensual es: Q$salario")
+    println("Bienvenido/a, ${usuario.nombre} ${usuario.apellido}")
+    println("Edad: ${usuario.edad} años")
+    println("Su ingreso mensual es: Q${usuario.salario}")
     println("Fecha y hora de registro: ${fechaRegistro.format(formatoFecha)}")
     println()
     println("¿Qué actividades realiza?")
