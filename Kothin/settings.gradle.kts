@@ -24,4 +24,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "ControldeGastos"
 include(":app")
+include(":app")
  
