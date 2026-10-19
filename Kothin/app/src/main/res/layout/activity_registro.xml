@@ -1,10 +1,131 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".RegistroActivity">
+    android:background="#F5F7FB"
+    android:fillViewport="true">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Crear mi cuenta"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:textColor="#1E293B"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Cuéntanos sobre tus finanzas"
+            android:textSize="16sp"
+            android:layout_marginBottom="20dp"/>
+
+        <EditText
+            android:id="@+id/etNombreRegistro"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Nombre"
+            android:inputType="textPersonName"/>
+
+        <EditText
+            android:id="@+id/etApellidoRegistro"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Apellido"
+            android:inputType="textPersonName"/>
+
+        <EditText
+            android:id="@+id/etEdadRegistro"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Edad"
+            android:inputType="number"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="¿Cuál es tu actividad?"
+            android:textSize="18sp"/>
+
+        <Spinner
+            android:id="@+id/spActividad"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"/>
+
+        <EditText
+            android:id="@+id/etSalarioRegistro"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:hint="Ingresos mensuales (Q)"
+            android:inputType="numberDecimal"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Tus gastos mensuales aproximados"
+            android:textSize="18sp"
+            android:textStyle="bold"/>
+
+        <EditText
+            android:id="@+id/etAlimentacion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Alimentación (Q)"
+            android:inputType="numberDecimal"/>
+
+        <EditText
+            android:id="@+id/etTransporte"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Transporte (Q)"
+            android:inputType="numberDecimal"/>
+
+        <EditText
+            android:id="@+id/etEstudios"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Estudios (Q)"
+            android:inputType="numberDecimal"/>
+
+        <EditText
+            android:id="@+id/etServicios"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Servicios (Q)"
+            android:inputType="numberDecimal"/>
+
+        <EditText
+            android:id="@+id/etOtros"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Otros gastos (Q)"
+            android:inputType="numberDecimal"/>
+
+        <TextView
+            android:id="@+id/txtFechaRegistro"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Fecha y hora de registro"
+            android:textSize="14sp"/>
+
+        <Button
+            android:id="@+id/btnCrearCuenta"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="Crear cuenta"
+            android:textAllCaps="false"/>
+
+    </LinearLayout>
+</ScrollView>
