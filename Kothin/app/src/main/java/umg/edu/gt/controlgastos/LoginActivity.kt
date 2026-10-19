@@ -15,7 +15,8 @@ class LoginActivity : AppCompatActivity() {
         val btnRegistrar = findViewById<Button>(R.id.btnRegistrar)
 
         btnIngresar.setOnClickListener {
-            // Aquí agregaremos el ingreso mediante ID
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
         }
 
         btnRegistrar.setOnClickListener {

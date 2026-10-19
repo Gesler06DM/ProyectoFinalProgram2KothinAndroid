@@ -8,6 +8,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import android.content.Intent
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,7 +30,18 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this, "Completa todos los campos", Toast.LENGTH_SHORT).show()
 
             } else {
-                Toast.makeText(this, "Bienvenido, ${nombre.text}", Toast.LENGTH_LONG).show()
+                val salarioMensual = salario.text.toString().toDoubleOrNull()
+
+                if (salarioMensual == null || salarioMensual < 0) {
+                    salario.error = "Ingresa un salario válido"
+                } else {
+                    val intent = Intent(this, DashboardActivity::class.java)
+
+                    intent.putExtra("nombre", nombre.text.toString().trim())
+                    intent.putExtra("salario", salarioMensual)
+
+                    startActivity(intent)
+                }
             }
         }
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
