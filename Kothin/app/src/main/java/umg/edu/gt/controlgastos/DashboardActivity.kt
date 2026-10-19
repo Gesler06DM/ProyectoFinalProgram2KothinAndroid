@@ -1,4 +1,3 @@
-
 package umg.edu.gt.controlgastos
 
 import android.app.Activity
@@ -16,11 +15,39 @@ class DashboardActivity : AppCompatActivity() {
     private var gastosEstimados = 0.0
     private var gastosNuevos = 0.0
 
+    private var ingresosNuevos = 0.0
+
     private lateinit var txtSaldo: TextView
     private lateinit var txtGastos: TextView
     private lateinit var txtMovimientos: TextView
 
+    private lateinit var txtIngresos: TextView
+
     private val movimientos = mutableListOf<String>()
+
+    private val agregarIngresoLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { resultado ->
+
+        if (resultado.resultCode == Activity.RESULT_OK) {
+
+            val datos = resultado.data
+            val concepto = datos?.getStringExtra("concepto") ?: "Ingreso"
+            val monto = datos?.getDoubleExtra("monto", 0.0) ?: 0.0
+
+            if (monto > 0.0 && monto.isFinite()) {
+
+                ingresosNuevos += monto
+
+                movimientos.add(
+                    0,
+                    "Ingreso: $concepto - ${formato(monto)}"
+                )
+
+                actualizarResumen()
+            }
+        }
+    }
 
     private val agregarGastoLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -56,14 +83,15 @@ class DashboardActivity : AppCompatActivity() {
 
         txtSaldo = findViewById(R.id.txtSaldo)
 
-        val txtIngresos =
-            findViewById<TextView>(R.id.txtIngresos)
+        txtIngresos = findViewById(R.id.txtIngresos)
 
         txtGastos = findViewById(R.id.txtGastos)
         txtMovimientos = findViewById(R.id.txtMovimientos)
 
         val btnAgregarGasto =
             findViewById<Button>(R.id.btnAgregarGasto)
+        val btnAgregarIngreso =
+            findViewById<Button>(R.id.btnAgregarIngreso)
 
         val preferencias = getSharedPreferences(
             "perfil_usuario",
@@ -97,7 +125,7 @@ class DashboardActivity : AppCompatActivity() {
         }
 
         txtBienvenida.text = "Hola, $nombre"
-        txtIngresos.text = formato(salario)
+        txtIngresos.text = formato(salario + ingresosNuevos)
 
         actualizarResumen()
 
@@ -110,15 +138,24 @@ class DashboardActivity : AppCompatActivity() {
 
             agregarGastoLauncher.launch(intent)
         }
+        btnAgregarIngreso.setOnClickListener {
+            val intent = Intent(
+                this,
+                AgregarIngresoActivity::class.java
+            )
+
+            agregarIngresoLauncher.launch(intent)
+        }
     }
 
     private fun actualizarResumen() {
 
         val totalGastos = gastosEstimados + gastosNuevos
-        val saldoDisponible = salario - totalGastos
+        val saldoDisponible = salario + ingresosNuevos - totalGastos
 
         txtSaldo.text = formato(saldoDisponible)
         txtGastos.text = formato(totalGastos)
+        txtIngresos.text = formato(salario + ingresosNuevos)
 
         val lista = mutableListOf<String>()
 
