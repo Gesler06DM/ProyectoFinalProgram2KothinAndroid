@@ -176,6 +176,20 @@ class DashboardActivity : AppCompatActivity() {
 
             agregarIngresoLauncher.launch(intent)
         }
+
+        val btnVerHistorial = findViewById<Button>(R.id.btnVerHistorial)
+
+        btnVerHistorial.setOnClickListener {
+            val intent = Intent(this, HistorialActivity::class.java)
+
+            intent.putStringArrayListExtra(
+                "movimientos",
+                ArrayList(movimientos)
+            )
+
+            startActivity(intent)
+        }
+
     }
 
     private fun guardarMovimientos() {
