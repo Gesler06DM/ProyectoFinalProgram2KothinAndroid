@@ -8,6 +8,8 @@ import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import java.util.Locale
+import java.text.SimpleDateFormat
+import java.util.Date
 
 class DashboardActivity : AppCompatActivity() {
 
@@ -41,7 +43,7 @@ class DashboardActivity : AppCompatActivity() {
 
                 movimientos.add(
                     0,
-                    "Ingreso: $concepto - ${formato(monto)}"
+                    "Ingreso: $concepto - ${formato(monto)}\nFecha: ${obtenerFechaHora()}"
                 )
 
                 guardarMovimientos()
@@ -67,7 +69,7 @@ class DashboardActivity : AppCompatActivity() {
 
                 movimientos.add(
                     0,
-                    "$concepto - $categoria: ${formato(monto)}"
+                    "$concepto - $categoria: ${formato(monto)}\nFecha: ${obtenerFechaHora()}"
                 )
 
                 guardarMovimientos()
@@ -259,5 +261,12 @@ class DashboardActivity : AppCompatActivity() {
             "Q %.2f",
             cantidad
         )
+    }
+    private fun obtenerFechaHora(): String {
+        val formatoFecha = SimpleDateFormat(
+            "dd/MM/yyyy hh:mm a",
+            Locale("es", "GT")
+        )
+        return formatoFecha.format(Date())
     }
 }
