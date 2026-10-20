@@ -44,6 +44,7 @@ class DashboardActivity : AppCompatActivity() {
                     "Ingreso: $concepto - ${formato(monto)}"
                 )
 
+                guardarMovimientos()
                 actualizarResumen()
             }
         }
@@ -69,6 +70,7 @@ class DashboardActivity : AppCompatActivity() {
                     "$concepto - $categoria: ${formato(monto)}"
                 )
 
+                guardarMovimientos()
                 actualizarResumen()
             }
         }
@@ -114,19 +116,47 @@ class DashboardActivity : AppCompatActivity() {
                 ?.toDoubleOrNull() ?: 0.0
         )
 
-        gastosNuevos = savedInstanceState
-            ?.getDouble("gastosNuevos") ?: 0.0
+        val datosGuardados = getSharedPreferences(
+            "movimientos_financieros",
+            MODE_PRIVATE
+        )
+
+        ingresosNuevos = savedInstanceState?.getDouble(
+            "ingresosNuevos"
+        ) ?: Double.fromBits(
+            datosGuardados.getLong("ingresosNuevos", 0L)
+        )
+
+        gastosNuevos = savedInstanceState?.getDouble(
+            "gastosNuevos"
+        ) ?: Double.fromBits(
+            datosGuardados.getLong("gastosNuevos", 0L)
+        )
+
+        movimientos.clear()
 
         val listaGuardada = savedInstanceState
             ?.getStringArrayList("movimientos")
 
         if (listaGuardada != null) {
             movimientos.addAll(listaGuardada)
+        } else {
+            val textoGuardado = datosGuardados.getString(
+                "movimientos",
+                "[]"
+            ) ?: "[]"
+
+            val arreglo = org.json.JSONArray(textoGuardado)
+
+            for (i in 0 until arreglo.length()) {
+                movimientos.add(arreglo.getString(i))
+            }
         }
 
         txtBienvenida.text = "Hola, $nombre"
         txtIngresos.text = formato(salario + ingresosNuevos)
 
+        guardarMovimientos()
         actualizarResumen()
 
         btnAgregarGasto.setOnClickListener {
@@ -146,6 +176,28 @@ class DashboardActivity : AppCompatActivity() {
 
             agregarIngresoLauncher.launch(intent)
         }
+    }
+
+    private fun guardarMovimientos() {
+        val preferencias = getSharedPreferences(
+            "movimientos_financieros",
+            MODE_PRIVATE
+        )
+
+        preferencias.edit()
+            .putLong(
+                "ingresosNuevos",
+                ingresosNuevos.toBits()
+            )
+            .putLong(
+                "gastosNuevos",
+                gastosNuevos.toBits()
+            )
+            .putString(
+                "movimientos",
+                org.json.JSONArray(movimientos).toString()
+            )
+            .apply()
     }
 
     private fun actualizarResumen() {
@@ -176,11 +228,14 @@ class DashboardActivity : AppCompatActivity() {
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
+        outState.putDouble("ingresosNuevos", ingresosNuevos)
         outState.putDouble("gastosNuevos", gastosNuevos)
+
         outState.putStringArrayList(
             "movimientos",
             ArrayList(movimientos)
         )
+
         super.onSaveInstanceState(outState)
     }
 
