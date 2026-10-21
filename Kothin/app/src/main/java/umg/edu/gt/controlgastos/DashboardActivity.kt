@@ -215,7 +215,39 @@ class DashboardActivity : AppCompatActivity() {
             )
             .apply()
     }
+    override fun onResume() {
+        super.onResume()
 
+        if (::txtSaldo.isInitialized) {
+
+            val preferencias = getSharedPreferences(
+                "movimientos_financieros",
+                MODE_PRIVATE
+            )
+
+            val textoGuardado = preferencias.getString(
+                "movimientos",
+                "[]"
+            ) ?: "[]"
+
+            val arreglo = org.json.JSONArray(textoGuardado)
+
+            movimientos.clear()
+
+            for (i in 0 until arreglo.length()) {
+                movimientos.add(arreglo.getString(i))
+            }
+            ingresosNuevos = Double.fromBits(
+                preferencias.getLong("ingresosNuevos", 0L)
+            )
+
+            gastosNuevos = Double.fromBits(
+                preferencias.getLong("gastosNuevos", 0L)
+            )
+
+            actualizarResumen()
+        }
+    }
     private fun actualizarResumen() {
 
         val totalGastos = gastosEstimados + gastosNuevos
