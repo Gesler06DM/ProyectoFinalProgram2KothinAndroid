@@ -10,10 +10,15 @@ import androidx.appcompat.app.AppCompatActivity
 import java.util.Locale
 import java.text.SimpleDateFormat
 import java.util.Date
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 
 class DashboardActivity : AppCompatActivity() {
 
     private var salario = 0.0
+    private val movimientoDao by lazy {
+        AppDatabase.obtenerBaseDeDatos(this).movimientoDao()
+    }
     private var gastosEstimados = 0.0
     private var gastosNuevos = 0.0
 
