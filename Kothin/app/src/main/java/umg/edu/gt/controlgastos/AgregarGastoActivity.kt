@@ -1,4 +1,3 @@
-
 package umg.edu.gt.controlgastos
 
 import android.app.Activity
@@ -54,8 +53,12 @@ class AgregarGastoActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            if (cantidad == null || !cantidad.isFinite()
-                || cantidad <= 0.0) {
+            if (!descripcion.any { it.isLetter() }) {
+                concepto.error = "El concepto debe contener letras"
+                return@setOnClickListener
+            }
+
+            if (cantidad == null || !cantidad.isFinite() || cantidad <= 0.0) {
                 monto.error = "Ingresa un monto válido"
                 return@setOnClickListener
             }

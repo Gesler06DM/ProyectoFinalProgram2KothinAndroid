@@ -1,3 +1,4 @@
+
 package umg.edu.gt.controlgastos
 
 import androidx.room.Dao
@@ -18,18 +19,45 @@ interface MovimientoDao {
     @Delete
     suspend fun eliminar(movimiento: MovimientoEntity)
 
-    @Query("SELECT * FROM movimientos ORDER BY fechaHora DESC, id DESC")
-    suspend fun obtenerTodos(): List<MovimientoEntity>
+    @Query("""
+        SELECT * FROM movimientos
+        WHERE idCliente = :idCliente
+        ORDER BY fechaHora DESC, id DESC
+    """)
+    suspend fun obtenerTodos(
+        idCliente: String
+    ): List<MovimientoEntity>
 
-    @Query("SELECT * FROM movimientos WHERE id = :id LIMIT 1")
-    suspend fun obtenerPorId(id: Long): MovimientoEntity?
+    @Query("""
+        SELECT * FROM movimientos
+        WHERE id = :id AND idCliente = :idCliente
+        LIMIT 1
+    """)
+    suspend fun obtenerPorId(
+        id: Long,
+        idCliente: String
+    ): MovimientoEntity?
 
-    @Query("SELECT * FROM movimientos WHERE tipo = :tipo ORDER BY fechaHora DESC")
-    suspend fun obtenerPorTipo(tipo: String): List<MovimientoEntity>
+    @Query("""
+        SELECT * FROM movimientos
+        WHERE idCliente = :idCliente AND tipo = :tipo
+        ORDER BY fechaHora DESC, id DESC
+    """)
+    suspend fun obtenerPorTipo(
+        idCliente: String,
+        tipo: String
+    ): List<MovimientoEntity>
 
-    @Query("SELECT * FROM movimientos WHERE fechaHora BETWEEN :inicio AND :fin ORDER BY fechaHora DESC")
+    @Query("""
+        SELECT * FROM movimientos
+        WHERE idCliente = :idCliente
+        AND fechaHora BETWEEN :inicio AND :fin
+        ORDER BY fechaHora DESC, id DESC
+    """)
     suspend fun obtenerPorFechas(
+        idCliente: String,
         inicio: Long,
         fin: Long
     ): List<MovimientoEntity>
 }
+

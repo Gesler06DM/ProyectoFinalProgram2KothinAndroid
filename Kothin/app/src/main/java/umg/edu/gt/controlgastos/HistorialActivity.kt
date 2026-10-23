@@ -22,7 +22,18 @@ class HistorialActivity : AppCompatActivity() {
         )
 
         lifecycleScope.launch {
-            val movimientos = movimientoDao.obtenerTodos()
+            val preferencias = getSharedPreferences(
+                "perfil_usuario",
+                MODE_PRIVATE
+            )
+
+            val idCliente = preferencias.getString("idCliente", null)
+
+            val movimientos = if (idCliente != null) {
+                movimientoDao.obtenerTodos(idCliente)
+            } else {
+                emptyList<MovimientoEntity>()
+            }
 
             if (movimientos.isNullOrEmpty()) {
 
@@ -50,9 +61,10 @@ class HistorialActivity : AppCompatActivity() {
                     texto.setOnClickListener {
 
                         val campoConcepto = android.widget.EditText(this@HistorialActivity)
-                        campoConcepto.setText(texto.text.toString().substringBefore("\n"))
+                        campoConcepto.setText(movimiento.concepto)
                         val campoMonto = android.widget.EditText(this@HistorialActivity)
                         campoMonto.hint = "Nuevo monto en quetzales"
+                        campoMonto.setText(movimiento.monto.toString())
                         campoMonto.inputType =
                             android.text.InputType.TYPE_CLASS_NUMBER or
                                     android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL
@@ -75,20 +87,13 @@ class HistorialActivity : AppCompatActivity() {
                                 val montoIngresado = campoMonto.text.toString().trim()
 
                                 if (nuevoTexto.isNotEmpty()) {
-                                    val primeraLinea = "${movimiento.tipo}: ${movimiento.concepto} - Q ${movimiento.monto}"
-
-                                    val patronMonto = Regex("""Q\s*(\d+(?:\.\d+)?)""")
-                                    val montoAnterior = patronMonto.find(primeraLinea)
-                                        ?.groupValues?.get(1)?.toDoubleOrNull()
-
                                     val nuevoMonto = if (montoIngresado.isBlank()) {
-                                        montoAnterior
+                                        movimiento.monto
                                     } else {
                                         montoIngresado.toDoubleOrNull()
                                     }
 
-                                    if (montoAnterior == null ||
-                                        nuevoMonto == null ||
+                                    if (nuevoMonto == null ||
                                         !nuevoMonto.isFinite() ||
                                         nuevoMonto <= 0.0
                                     ) {
@@ -98,34 +103,6 @@ class HistorialActivity : AppCompatActivity() {
                                             android.widget.Toast.LENGTH_SHORT
                                         ).show()
                                     } else {
-
-                                        val lineaActualizada = patronMonto.replaceFirst(
-                                            nuevoTexto,
-                                            String.format(
-                                                java.util.Locale.US,
-                                                "Q %.2f",
-                                                nuevoMonto
-                                            )
-                                        )
-
-                                        // Si el texto editado ya no contiene el monto,
-                                        // se agrega al final.
-                                        val lineaFinal =
-                                            if (patronMonto.containsMatchIn(nuevoTexto)) {
-                                                lineaActualizada
-                                            } else {
-                                                "$nuevoTexto - Q ${
-                                                    String.format(
-                                                        java.util.Locale.US,
-                                                        "%.2f",
-                                                        nuevoMonto
-                                                    )
-                                                }"
-                                            }
-
-                                        val movimientoActualizado = lineaFinal
-                                        texto.text = movimientoActualizado
-
                                         val movimientoEditado = movimiento.copy(
                                             concepto = nuevoTexto,
                                             monto = nuevoMonto
@@ -134,7 +111,13 @@ class HistorialActivity : AppCompatActivity() {
                                         lifecycleScope.launch {
                                             movimientoDao.actualizar(movimientoEditado)
 
-                                            texto.text = movimientoEditado.toString()
+                                            texto.text = "${movimientoEditado.tipo}: ${movimientoEditado.concepto} - Q ${
+                                                String.format(
+                                                    java.util.Locale.US,
+                                                    "%.2f",
+                                                    movimientoEditado.monto
+                                                )
+                                            }"
 
                                             android.widget.Toast.makeText(
                                                 this@HistorialActivity,
@@ -145,7 +128,28 @@ class HistorialActivity : AppCompatActivity() {
                                     }
                                 }
                             }
+                            .setNeutralButton("Eliminar") { _, _ ->
 
+                                androidx.appcompat.app.AlertDialog.Builder(this@HistorialActivity)
+                                    .setTitle("Eliminar movimiento")
+                                    .setMessage("¿Estás seguro de que deseas eliminar este movimiento?")
+                                    .setPositiveButton("Sí, eliminar") { _, _ ->
+
+                                        lifecycleScope.launch {
+                                            movimientoDao.eliminar(movimiento)
+
+                                            texto.visibility = android.view.View.GONE
+
+                                            android.widget.Toast.makeText(
+                                                this@HistorialActivity,
+                                                "Movimiento eliminado correctamente",
+                                                android.widget.Toast.LENGTH_SHORT
+                                            ).show()
+                                        }
+                                    }
+                                    .setNegativeButton("Cancelar", null)
+                                    .show()
+                            }
                             .show()
                     }
 

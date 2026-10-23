@@ -14,6 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 
 class DashboardActivity : AppCompatActivity() {
+    private lateinit var idCliente: String
 
     private var salario = 0.0
     private val movimientoDao by lazy {
@@ -44,6 +45,19 @@ class DashboardActivity : AppCompatActivity() {
 
             if (monto > 0.0 && monto.isFinite()) {
 
+                lifecycleScope.launch {
+                    movimientoDao.insertar(
+                        MovimientoEntity(
+                            idCliente = idCliente,
+                            tipo = "Ingreso",
+                            concepto = concepto,
+                            categoria = "Ingresos",
+                            monto = monto,
+                            fechaHora = System.currentTimeMillis()
+                        )
+                    )
+                }
+
                 ingresosNuevos += monto
 
                 movimientos.add(
@@ -69,6 +83,18 @@ class DashboardActivity : AppCompatActivity() {
             val categoria = datos?.getStringExtra("categoria") ?: ""
 
             if (monto > 0.0 && monto.isFinite()) {
+                lifecycleScope.launch {
+                    movimientoDao.insertar(
+                        MovimientoEntity(
+                            idCliente = idCliente,
+                            tipo = "Gasto",
+                            concepto = concepto,
+                            categoria = categoria,
+                            monto = monto,
+                            fechaHora = System.currentTimeMillis()
+                        )
+                    )
+                }
 
                 gastosNuevos += monto
 
@@ -86,6 +112,14 @@ class DashboardActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dashboard)
+        val preferenciasUsuario = getSharedPreferences(
+            "perfil_usuario",
+            MODE_PRIVATE
+        )
+
+        idCliente = intent.getStringExtra("idCliente")
+            ?: preferenciasUsuario.getString("idCliente", null)
+                    ?: ""
 
         val txtBienvenida =
             findViewById<TextView>(R.id.txtBienvenida)
@@ -224,62 +258,72 @@ class DashboardActivity : AppCompatActivity() {
         super.onResume()
 
         if (::txtSaldo.isInitialized) {
-
-            val preferencias = getSharedPreferences(
-                "movimientos_financieros",
-                MODE_PRIVATE
-            )
-
-            val textoGuardado = preferencias.getString(
-                "movimientos",
-                "[]"
-            ) ?: "[]"
-
-            val arreglo = org.json.JSONArray(textoGuardado)
-
-            movimientos.clear()
-
-            for (i in 0 until arreglo.length()) {
-                movimientos.add(arreglo.getString(i))
-            }
-            ingresosNuevos = Double.fromBits(
-                preferencias.getLong("ingresosNuevos", 0L)
-            )
-
-            gastosNuevos = Double.fromBits(
-                preferencias.getLong("gastosNuevos", 0L)
-            )
-
             actualizarResumen()
         }
     }
+
+
     private fun actualizarResumen() {
+        lifecycleScope.launch {
+            val preferencias = getSharedPreferences("perfil_usuario", MODE_PRIVATE)
+            val idClienteActual = preferencias.getString("idCliente", null)
 
-        val totalGastos = gastosEstimados + gastosNuevos
-        val saldoDisponible = salario + ingresosNuevos - totalGastos
+            val registros = if (idClienteActual != null) {
+                movimientoDao.obtenerTodos(idClienteActual)
+            } else {
+                emptyList<MovimientoEntity>()
+            }
 
-        txtSaldo.text = formato(saldoDisponible)
-        txtGastos.text = formato(totalGastos)
-        txtIngresos.text = formato(salario + ingresosNuevos)
+            val ingresosRegistrados = registros
+                .filter { it.tipo.equals("Ingreso", ignoreCase = true) }
+                .sumOf { it.monto }
 
-        val lista = mutableListOf<String>()
+            val gastosRegistrados = registros
+                .filter { it.tipo.equals("Gasto", ignoreCase = true) }
+                .sumOf { it.monto }
 
-        if (gastosEstimados > 0.0) {
-            lista.add(
-                "Gastos mensuales estimados: ${formato(gastosEstimados)}"
+            val totalIngresos = salario + ingresosRegistrados
+            val totalGastos = gastosEstimados + gastosRegistrados
+            val saldoDisponible = totalIngresos - totalGastos
+
+            txtIngresos.text = formato(totalIngresos)
+            txtGastos.text = formato(totalGastos)
+            txtSaldo.text = formato(saldoDisponible)
+
+            val lista = mutableListOf<String>()
+
+            if (gastosEstimados > 0.0) {
+                lista.add(
+                    "Gastos mensuales estimados: ${formato(gastosEstimados)}"
+                )
+            }
+
+            val formatoFecha = SimpleDateFormat(
+                "dd/MM/yyyy hh:mm a",
+                Locale("es", "GT")
             )
-        }
 
-        lista.addAll(movimientos)
+            registros.forEach { movimiento ->
+                val descripcion =
+                    if (movimiento.tipo.equals("Ingreso", ignoreCase = true)) {
+                        "Ingreso: ${movimiento.concepto}"
+                    } else {
+                        "${movimiento.concepto} - ${movimiento.categoria}"
+                    }
 
-        txtMovimientos.text =
-            if (lista.isEmpty()) {
+                lista.add(
+                    "$descripcion: ${formato(movimiento.monto)}\n" +
+                            "Fecha: ${formatoFecha.format(Date(movimiento.fechaHora))}"
+                )
+            }
+
+            txtMovimientos.text = if (lista.isEmpty()) {
                 "Todavía no hay movimientos registrados."
             } else {
                 lista.joinToString("\n")
             }
+        }
     }
-
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putDouble("ingresosNuevos", ingresosNuevos)
         outState.putDouble("gastosNuevos", gastosNuevos)

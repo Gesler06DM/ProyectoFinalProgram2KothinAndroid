@@ -7,6 +7,7 @@ import androidx.room.PrimaryKey
 data class MovimientoEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
+    val idCliente: String,
 
     val tipo: String,
     val concepto: String,
