@@ -27,7 +27,58 @@
             android:text="Selecciona un movimiento para editarlo"
             android:textSize="15sp"
             android:textColor="#777777"
-            android:layout_marginBottom="24dp"/>
+            android:layout_marginBottom="20dp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Filtrar movimientos"
+        android:textSize="17sp"
+        android:textStyle="bold"
+        android:textColor="#333333"
+        android:layout_marginBottom="12dp"/>
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="none"
+        android:layout_marginBottom="20dp">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnTodos"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Todos"
+            android:textAllCaps="false"/>
+
+        <Button
+            android:id="@+id/btnHoy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hoy"
+            android:textAllCaps="false"/>
+
+        <Button
+            android:id="@+id/btnSemana"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Semana"
+            android:textAllCaps="false"/>
+
+        <Button
+            android:id="@+id/btnMes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Mes"
+            android:textAllCaps="false"/>
+
+    </LinearLayout>
+    </HorizontalScrollView>
 
         <LinearLayout
             android:id="@+id/contenedorMovimientos"
