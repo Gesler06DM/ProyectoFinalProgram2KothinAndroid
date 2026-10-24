@@ -88,7 +88,33 @@ class HistorialActivity : AppCompatActivity() {
                 } else {
                     emptyList<MovimientoEntity>()
                 }
+                val totalIngresos = movimientos
+                    .filter { it.tipo.equals("Ingreso", ignoreCase = true) }
+                    .sumOf { it.monto }
 
+                val totalGastos = movimientos
+                    .filter { it.tipo.equals("Gasto", ignoreCase = true) }
+                    .sumOf { it.monto }
+
+                val balancePeriodo = totalIngresos - totalGastos
+
+                val resumen = TextView(this@HistorialActivity)
+
+                resumen.text = """
+    Resumen: $filtroActual
+
+    Ingresos: Q ${String.format(java.util.Locale.US, "%.2f", totalIngresos)}
+    Gastos: Q ${String.format(java.util.Locale.US, "%.2f", totalGastos)}
+    Balance: Q ${String.format(java.util.Locale.US, "%.2f", balancePeriodo)}
+""".trimIndent()
+
+                resumen.textSize = 17f
+                resumen.setTextColor(
+                    android.graphics.Color.parseColor("#333333")
+                )
+                resumen.setPadding(0, 20, 0, 30)
+
+                contenedor.addView(resumen)
 
                 if (movimientos.isNullOrEmpty()) {
 
