@@ -205,6 +205,7 @@ class HistorialActivity : AppCompatActivity() {
 
                                             lifecycleScope.launch {
                                                 movimientoDao.actualizar(movimientoEditado)
+                                                cargarMovimientos()
 
                                                 texto.text =
                                                     "${movimientoEditado.tipo}: ${movimientoEditado.concepto} - Q ${
@@ -233,6 +234,7 @@ class HistorialActivity : AppCompatActivity() {
 
                                             lifecycleScope.launch {
                                                 movimientoDao.eliminar(movimiento)
+                                                cargarMovimientos()
 
                                                 texto.visibility = android.view.View.GONE
 
