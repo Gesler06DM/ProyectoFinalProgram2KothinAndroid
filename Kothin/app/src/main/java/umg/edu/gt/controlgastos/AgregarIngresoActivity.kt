@@ -25,6 +25,12 @@ class AgregarIngresoActivity : AppCompatActivity() {
         val guardar = findViewById<Button>(
             R.id.btnGuardarIngreso
         )
+        val btnRegresar = findViewById<Button>(R.id.btnRegresar)
+
+        btnRegresar.setOnClickListener {
+            setResult(Activity.RESULT_CANCELED)
+            finish()
+        }
 
         guardar.setOnClickListener {
 

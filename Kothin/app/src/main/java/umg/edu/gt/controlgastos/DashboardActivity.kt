@@ -135,6 +135,17 @@ class DashboardActivity : AppCompatActivity() {
             findViewById<Button>(R.id.btnAgregarGasto)
         val btnAgregarIngreso =
             findViewById<Button>(R.id.btnAgregarIngreso)
+        val btnRegresar = findViewById<Button>(R.id.btnRegresar)
+
+        btnRegresar.setOnClickListener {
+            val intent = Intent(this, LoginActivity::class.java)
+            intent.addFlags(
+                Intent.FLAG_ACTIVITY_CLEAR_TOP or
+                        Intent.FLAG_ACTIVITY_SINGLE_TOP
+            )
+            startActivity(intent)
+            finish()
+        }
 
         val preferencias = getSharedPreferences(
             "perfil_usuario",

@@ -20,6 +20,12 @@ class AgregarGastoActivity : AppCompatActivity() {
         val monto = findViewById<EditText>(R.id.etMonto)
         val categoria = findViewById<Spinner>(R.id.spCategoria)
         val guardar = findViewById<Button>(R.id.btnGuardarGasto)
+        val btnRegresar = findViewById<Button>(R.id.btnRegresar)
+
+        btnRegresar.setOnClickListener {
+            setResult(Activity.RESULT_CANCELED)
+            finish()
+        }
 
         val categorias = listOf(
             "Alimentación",

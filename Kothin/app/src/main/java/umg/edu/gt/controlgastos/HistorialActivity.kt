@@ -52,6 +52,11 @@ class HistorialActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_historial)
+        val btnRegresar = findViewById<Button>(R.id.btnRegresar)
+
+        btnRegresar.setOnClickListener {
+            finish()
+        }
         val btnTodos = findViewById<Button>(R.id.btnTodos)
         val btnHoy = findViewById<Button>(R.id.btnHoy)
         val btnSemana = findViewById<Button>(R.id.btnSemana)
